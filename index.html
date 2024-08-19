@@ -29,7 +29,7 @@
 
             background-color: #171717;
             border: #9c459c solid 5px;
-            color: #9c459c;
+            color: #909090;
             padding: 5px;
             width: 100%;
             
@@ -46,6 +46,7 @@
             font-size: 70px;
             font-weight: bold;
             text-shadow:  0 3px 0 #5f2f5f;
+            margin-bottom: -15px;
         }
         table
         {
@@ -65,6 +66,10 @@
         {
             background-color: #2e2e2e;
         }
+        sub
+        {
+            margin:5px;
+        }
     </style>
     <script>
         
@@ -73,7 +78,8 @@
 <body>
     <header>
         <h1>DEAD <br> BY DEMO</h1>
-        <input type="text" placeholder="NAME SEARCH..." onkeyup="search()" id="searchbar"/>
+        <p><sub>website created by <a href="https://discord.com/users/594534990771912714">@neo2x1</a></sub></p>
+        <input type="text" placeholder="NAME SEARCH..." onkeyup="search()" id="searchbar"/> 
     </header>
     <main>
         <table id="table">
@@ -119,7 +125,7 @@
             searched = document.getElementById("searchbar").value;
             for(let i = 0; i<distinct.length; i++)
             {
-                if(distinct[i].toLowerCase().includes(searched))
+                if(distinct[i].toLowerCase().includes(searched.toLowerCase()))
                 {
                     key.push(i);
                 }
