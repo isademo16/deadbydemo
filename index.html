@@ -39,6 +39,7 @@
             border-left: #99d9ea solid 5px;
             color: #7092be;
             margin-top: 70px;
+            margin-bottom: 300px;
         }
         h1
         {
@@ -103,7 +104,7 @@
         result = 0;
         const table = document.getElementById("table");
         table.innerHTML = "<tr><td>Player Name</td><td>Times Sacraficed</td></tr>";
-        for(let i = 0; i<distinct.length; i++)
+        for(let i = 0; i<distinct.length-1; i++)
         {
             i%2==0? text=" class='lighter'": text="";
             table.innerHTML += "<tr"+text+"><td><div>"+distinct[i]+"</div></td><td><div>"+counter[i]+"</div></td></tr>";
