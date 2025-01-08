@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dead by demo</title>
+    <title>Dead by Demo</title>
     <style>
         *
         {
@@ -26,13 +26,11 @@
             padding-left: 30px;
         }
         header input{
-
             background-color: #171717;
             border: #9c459c solid 5px;
             color: #909090;
             padding: 5px;
             width: 100%;
-            
         }
         main
         {
@@ -70,22 +68,36 @@
         {
             margin:5px;
         }
-p
-{
-color: gray;
-}
-a:link
-{
-color: #7092be;
-}
-a:visited
-{
-color: #7092be;
-}
+        p
+        {
+            color: gray;
+        }
+        a:link
+        {
+            color: #7092be;
+        }
+        a:visited
+        {
+            color: #7092be;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            background-color: #9c459c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background-color: #5f2f5f;
+            cursor: not-allowed;
+        }
     </style>
-    <script>
-        
-    </script>
 </head>
 <body>
     <header>
@@ -94,62 +106,92 @@ color: #7092be;
         <input type="text" placeholder="NAME SEARCH..." onkeyup="search()" id="searchbar"/> 
     </header>
     <main>
-        <table id="table">
-        </table>
+        <table id="table"></table>
+        <div class="pagination" id="pagination"></div>
     </main>
     <script>
         let result;
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET", "names.txt", false);
         xmlhttp.send();
-        if (xmlhttp.status==200) {
+        if (xmlhttp.status == 200) {
             text = xmlhttp.responseText;
             result = text.split(/\r?\n/);
         }
-        let distinct = new Array();
-        let counter = new Array();
-        for(let name of result)
-        {
 
-            if(distinct.indexOf(name)==-1)
-            {
-                distinct.push(name)
-                counter[distinct.indexOf(name)] = 1
+        let distinct = [];
+        let counter = [];
+        for (let name of result) {
+            if (distinct.indexOf(name) == -1) {
+                distinct.push(name);
+                counter[distinct.indexOf(name)] = 1;
                 continue;
             }
             counter[distinct.indexOf(name)]++;
         }
-        result = 0;
-        const table = document.getElementById("table");
-        table.innerHTML = "<tr><td>Player Name</td><td>Times Sacraficed</td></tr>";
-        for(let i = 0; i<distinct.length-1; i++)
-        {
-            i%2==0? text=" class='lighter'": text="";
-            table.innerHTML += "<tr"+text+"><td><div>"+distinct[i]+"</div></td><td><div>"+counter[i]+"</div></td></tr>";
-        }
 
+        const rowsPerPage = 10; // Rows to display per page
+        let currentPage = 1; // Current page
+        let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
 
-
-
-        function search()
-        {
-            let key = [];
-            searched = document.getElementById("searchbar").value;
-            for(let i = 0; i<distinct.length; i++)
-            {
-                if(distinct[i].toLowerCase().includes(searched.toLowerCase()))
-                {
-                    key.push(i);
-                }
-            }
+        function displayTable(page, data) {
             const table = document.getElementById("table");
-            table.innerHTML = "<tr><td>Player Name</td><td>Times Sacraficed</td></tr>";
-            for(let i = 0; i<key.length; i++)
-            {
-                i%2==0? text=" class='lighter'": text="";
-                table.innerHTML += "<tr"+text+"><td><div>"+distinct[key[i]]+"</div></td><td><div>"+counter[key[i]]+"</div></td></tr>";
+            table.innerHTML = "<tr><td>Player Name</td><td>Times Sacrificed</td></tr>";
+
+            const start = (page - 1) * rowsPerPage;
+            const end = Math.min(start + rowsPerPage, data.length);
+
+            for (let i = start; i < end; i++) {
+                const rowClass = i % 2 === 0 ? " class='lighter'" : "";
+                table.innerHTML += `<tr${rowClass}><td><div>${data[i].name}</div></td><td><div>${data[i].count}</div></td></tr>`;
             }
+            updatePagination(page, data.length);
         }
+
+        function updatePagination(page, totalRows) {
+            const pagination = document.getElementById("pagination");
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            pagination.innerHTML = "";
+
+            // Previous Button
+            const prevButton = document.createElement("button");
+            prevButton.textContent = "Previous";
+            prevButton.disabled = page === 1;
+            prevButton.onclick = () => changePage(-1);
+            pagination.appendChild(prevButton);
+
+            // Page Info
+            const pageInfo = document.createElement("span");
+            pageInfo.textContent = `Page ${page} of ${totalPages}`;
+            pageInfo.style.color = "white";
+            pageInfo.style.margin = "0 10px";
+            pagination.appendChild(pageInfo);
+
+            // Next Button
+            const nextButton = document.createElement("button");
+            nextButton.textContent = "Next";
+            nextButton.disabled = page === totalPages;
+            nextButton.onclick = () => changePage(1);
+            pagination.appendChild(nextButton);
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            displayTable(currentPage, searchResults);
+        }
+
+        function search() {
+            const query = document.getElementById("searchbar").value.toLowerCase();
+            searchResults = distinct
+                .map((name, index) => ({ name, count: counter[index] }))
+                .filter(item => item.name.toLowerCase().includes(query));
+            currentPage = 1; // Reset to first page
+            displayTable(currentPage, searchResults);
+        }
+
+        // Initial Display
+        displayTable(currentPage, searchResults);
     </script>
 </body>
 </html>
+
