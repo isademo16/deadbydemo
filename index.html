@@ -113,7 +113,7 @@
     <header>
         <h1>DEAD <br> BY DEMO</h1>
         <br>
-        <input type="text" placeholder="NAME SEARCH..." onkeyup="search()" id="searchbar"/> 
+        <input type="text" placeholder="NAME SEARCH..." onkeyup="debouncedSearch()" id="searchbar"/> 
     </header>
     <main>
         <table id="table"></table>
@@ -140,10 +140,19 @@
             counter[distinct.indexOf(name)]++;
         }
 
-        const rowsPerPage = 32; // Rows to display per page
+        const rowsPerPage = 10; // Rows to display per page
         let currentPage = 1; // Current page
         let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
         let sortBySacrificed = false; // Flag to toggle between recent name order and most sacrificed order
+
+        // Debounce function to delay the search
+        let debounceTimeout;
+        function debouncedSearch() {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(function() {
+                search();
+            }, 500); // Delay of 500ms after the user stops typing
+        }
 
         // Display table based on the current page
         function displayTable(page, data) {
@@ -192,7 +201,7 @@
 
             // Page Info
             const pageInfo = document.createElement("span");
-            pageInfo.textContent = `Page ${page} of ${totalPages}`;
+            pageInfo.textContent = `Page ${page}`;
             pageInfo.style.color = "white";
             pageInfo.style.margin = "0 10px";
             pagination.appendChild(pageInfo);
@@ -236,8 +245,6 @@
             searchResults = distinct
                 .map((name, index) => ({ name, count: counter[index] }))
                 .filter(item => item.name.toLowerCase().includes(query));
-            toggleSort(); // Maintain sort order when searching
-            currentPage = 1; // Reset to first page
             displayTable(currentPage, searchResults);
         }
 
