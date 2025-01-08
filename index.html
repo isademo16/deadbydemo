@@ -200,9 +200,9 @@
             prevButton.onclick = () => changePage(-1);
             pagination.appendChild(prevButton);
 
-            // Page Info
+            // Page Info (Current Page / Total Pages)
             const pageInfo = document.createElement("span");
-            pageInfo.textContent = `Page ${page}`;
+            pageInfo.textContent = `Page ${page} of ${totalPages}`;
             pageInfo.style.color = "white";
             pageInfo.style.margin = "0 10px";
             pagination.appendChild(pageInfo);
