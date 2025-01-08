@@ -130,83 +130,83 @@
             counter[distinct.indexOf(name)]++;
         }
 
-<script>
-    const rowsPerPage = 32; // Rows to display per page
-    let currentPage = 1; // Current page
-    let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
+        const rowsPerPage = 10; // Rows to display per page
+        let currentPage = 1; // Current page
+        let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
 
-    function displayTable(page, data) {
-        const table = document.getElementById("table");
-        table.innerHTML = "<tr><td>Player Name</td><td>Times Sacrificed</td></tr>";
+        function displayTable(page, data) {
+            const table = document.getElementById("table");
+            table.innerHTML = "<tr><td>Player Name</td><td>Times Sacrificed</td></tr>";
 
-        const start = (page - 1) * rowsPerPage;
-        const end = Math.min(start + rowsPerPage, data.length);
+            const start = (page - 1) * rowsPerPage;
+            const end = Math.min(start + rowsPerPage, data.length);
 
-        for (let i = start; i < end; i++) {
-            const rowClass = i % 2 === 0 ? " class='lighter'" : "";
-            table.innerHTML += `<tr${rowClass}><td><div>${data[i].name}</div></td><td><div>${data[i].count}</div></td></tr>`;
+            for (let i = start; i < end; i++) {
+                const rowClass = i % 2 === 0 ? " class='lighter'" : "";
+                table.innerHTML += `<tr${rowClass}><td><div>${data[i].name}</div></td><td><div>${data[i].count}</div></td></tr>`;
+            }
+            updatePagination(page, data.length);
         }
-        updatePagination(page, data.length);
-    }
 
-    function updatePagination(page, totalRows) {
-        const pagination = document.getElementById("pagination");
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-        pagination.innerHTML = "";
+        function updatePagination(page, totalRows) {
+            const pagination = document.getElementById("pagination");
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            pagination.innerHTML = "";
 
-        // Previous Buttons
-        const prev10Button = document.createElement("button");
-        prev10Button.textContent = "<< Previous 10";
-        prev10Button.disabled = page <= 10;
-        prev10Button.onclick = () => changePage(-10);
-        pagination.appendChild(prev10Button);
+            // Previous 10 Pages Button
+            const prev10Button = document.createElement("button");
+            prev10Button.textContent = "<< Previous 10";
+            prev10Button.disabled = page <= 10;
+            prev10Button.onclick = () => changePage(-10);
+            pagination.appendChild(prev10Button);
 
-        const prevButton = document.createElement("button");
-        prevButton.textContent = "< Previous";
-        prevButton.disabled = page === 1;
-        prevButton.onclick = () => changePage(-1);
-        pagination.appendChild(prevButton);
+            // Previous Button
+            const prevButton = document.createElement("button");
+            prevButton.textContent = "< Previous";
+            prevButton.disabled = page === 1;
+            prevButton.onclick = () => changePage(-1);
+            pagination.appendChild(prevButton);
 
-        // Page Info
-        const pageInfo = document.createElement("span");
-        pageInfo.textContent = `Page ${page} of ${totalPages}`;
-        pageInfo.style.color = "white";
-        pageInfo.style.margin = "0 10px";
-        pagination.appendChild(pageInfo);
+            // Page Info
+            const pageInfo = document.createElement("span");
+            pageInfo.textContent = `Page ${page} of ${totalPages}`;
+            pageInfo.style.color = "white";
+            pageInfo.style.margin = "0 10px";
+            pagination.appendChild(pageInfo);
 
-        // Next Buttons
-        const nextButton = document.createElement("button");
-        nextButton.textContent = "Next >";
-        nextButton.disabled = page === totalPages;
-        nextButton.onclick = () => changePage(1);
-        pagination.appendChild(nextButton);
+            // Next Button
+            const nextButton = document.createElement("button");
+            nextButton.textContent = "Next >";
+            nextButton.disabled = page === totalPages;
+            nextButton.onclick = () => changePage(1);
+            pagination.appendChild(nextButton);
 
-        const next10Button = document.createElement("button");
-        next10Button.textContent = "Next 10 >>";
-        next10Button.disabled = page + 10 > totalPages;
-        next10Button.onclick = () => changePage(10);
-        pagination.appendChild(next10Button);
-    }
+            // Next 10 Pages Button
+            const next10Button = document.createElement("button");
+            next10Button.textContent = "Next 10 >>";
+            next10Button.disabled = page + 10 > totalPages;
+            next10Button.onclick = () => changePage(10);
+            pagination.appendChild(next10Button);
+        }
 
-    function changePage(step) {
-        const totalPages = Math.ceil(searchResults.length / rowsPerPage);
-        currentPage = Math.max(1, Math.min(currentPage + step, totalPages));
+        function changePage(step) {
+            const totalPages = Math.ceil(searchResults.length / rowsPerPage);
+            currentPage = Math.max(1, Math.min(currentPage + step, totalPages));
+            displayTable(currentPage, searchResults);
+        }
+
+        function search() {
+            const query = document.getElementById("searchbar").value.toLowerCase();
+            searchResults = distinct
+                .map((name, index) => ({ name, count: counter[index] }))
+                .filter(item => item.name.toLowerCase().includes(query));
+            currentPage = 1; // Reset to first page
+            displayTable(currentPage, searchResults);
+        }
+
+        // Initial Display
         displayTable(currentPage, searchResults);
-    }
-
-    function search() {
-        const query = document.getElementById("searchbar").value.toLowerCase();
-        searchResults = distinct
-            .map((name, index) => ({ name, count: counter[index] }))
-            .filter(item => item.name.toLowerCase().includes(query));
-        currentPage = 1; // Reset to first page
-        displayTable(currentPage, searchResults);
-    }
-
-    // Initial Display
-    displayTable(currentPage, searchResults);
-</script>
-    
+    </script>
 </body>
 </html>
 
