@@ -130,7 +130,7 @@
             counter[distinct.indexOf(name)]++;
         }
 
-        const rowsPerPage = 10; // Rows to display per page
+        const rowsPerPage = 45; // Rows to display per page
         let currentPage = 1; // Current page
         let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
 
