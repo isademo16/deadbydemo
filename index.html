@@ -188,7 +188,7 @@
 
             // Previous 10 Pages Button
             const prev10Button = document.createElement("button");
-            prev10Button.textContent = "<< Previous 10";
+            prev10Button.textContent = "<< 10";
             prev10Button.disabled = page <= 10;
             prev10Button.onclick = () => changePage(-10);
             pagination.appendChild(prev10Button);
@@ -216,7 +216,7 @@
 
             // Next 10 Pages Button
             const next10Button = document.createElement("button");
-            next10Button.textContent = "Next 10 >>";
+            next10Button.textContent = "10 >>";
             next10Button.disabled = page + 10 > totalPages;
             next10Button.onclick = () => changePage(10);
             pagination.appendChild(next10Button);
