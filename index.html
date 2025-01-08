@@ -143,6 +143,7 @@
         const rowsPerPage = 32; // Rows to display per page
         let currentPage = 1; // Current page
         let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
+        let filteredResults = [...searchResults]; // Copy of the search results, for filtering
         let sortBySacrificed = false; // Flag to toggle between recent name order and most sacrificed order
 
         // Debounce function to delay the search
@@ -223,34 +224,33 @@
 
         // Change page based on button click (1 or 10 pages)
         function changePage(step) {
-            const totalPages = Math.ceil(searchResults.length / rowsPerPage);
+            const totalPages = Math.ceil(filteredResults.length / rowsPerPage);
             currentPage = Math.max(1, Math.min(currentPage + step, totalPages));
-            displayTable(currentPage, searchResults);
+            displayTable(currentPage, filteredResults);
         }
 
         // Toggle between sorting by "Most Sacrificed" and "Most Recent"
         function toggleSort() {
             sortBySacrificed = !sortBySacrificed;
             if (sortBySacrificed) {
-                searchResults.sort((a, b) => b.count - a.count); // Sort by most sacrificed (descending)
+                filteredResults.sort((a, b) => b.count - a.count); // Sort by most sacrificed (descending)
             } else {
-                searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Revert to original order
+                filteredResults = filteredResults.sort((a, b) => {
+                    return distinct.indexOf(a.name) - distinct.indexOf(b.name); // Revert to original order
+                });
             }
-            displayTable(currentPage, searchResults);
+            displayTable(currentPage, filteredResults);
         }
 
         // Filter search results based on input
         function search() {
             const query = document.getElementById("searchbar").value.toLowerCase();
-            searchResults = distinct
-                .map((name, index) => ({ name, count: counter[index] }))
-                .filter(item => item.name.toLowerCase().includes(query));
-            displayTable(currentPage, searchResults);
+            filteredResults = searchResults.filter(item => item.name.toLowerCase().includes(query));
+            displayTable(currentPage, filteredResults);
         }
 
         // Initial Display: Default to most recent order (no sorting)
-        displayTable(currentPage, searchResults);
+        displayTable(currentPage, filteredResults);
     </script>
 </body>
 </html>
-
