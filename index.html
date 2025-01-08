@@ -232,13 +232,18 @@
         // Toggle between sorting by "Most Sacrificed" and "Most Recent"
         function toggleSort() {
             sortBySacrificed = !sortBySacrificed;
+            
             if (sortBySacrificed) {
-                filteredResults.sort((a, b) => b.count - a.count); // Sort by most sacrificed (descending)
+                // Sort by most sacrificed (highest count first)
+                filteredResults.sort((a, b) => b.count - a.count);
             } else {
+                // Sort by most recent (based on the order in the distinct array)
                 filteredResults = filteredResults.sort((a, b) => {
-                    return distinct.indexOf(a.name) - distinct.indexOf(b.name); // Revert to original order
+                    return distinct.indexOf(a.name) - distinct.indexOf(b.name);
                 });
             }
+
+            // Re-display the table with the updated sorted data
             displayTable(currentPage, filteredResults);
         }
 
