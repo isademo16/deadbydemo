@@ -97,6 +97,16 @@
             background-color: #5f2f5f;
             cursor: not-allowed;
         }
+        .sortable {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .sortable span {
+            font-size: 12px;
+            color: #7092be;
+        }
     </style>
 </head>
 <body>
@@ -130,13 +140,24 @@
             counter[distinct.indexOf(name)]++;
         }
 
-        const rowsPerPage = 32; // Rows to display per page
+        const rowsPerPage = 10; // Rows to display per page
         let currentPage = 1; // Current page
         let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
+        let sortDescending = true; // Sort order flag
 
         function displayTable(page, data) {
             const table = document.getElementById("table");
-            table.innerHTML = "<tr><td>Player Name</td><td>Times Sacrificed</td></tr>";
+            table.innerHTML = `
+                <tr>
+                    <td>Player Name</td>
+                    <td>
+                        <div class="sortable" onclick="toggleSort()">
+                            Times Sacrificed
+                            <span>${sortDescending ? "▲▼" : "▼▲"}</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
 
             const start = (page - 1) * rowsPerPage;
             const end = Math.min(start + rowsPerPage, data.length);
@@ -195,18 +216,25 @@
             displayTable(currentPage, searchResults);
         }
 
+        function toggleSort() {
+            sortDescending = !sortDescending;
+            searchResults.sort((a, b) => sortDescending ? b.count - a.count : a.count - b.count);
+            displayTable(currentPage, searchResults);
+        }
+
         function search() {
             const query = document.getElementById("searchbar").value.toLowerCase();
             searchResults = distinct
                 .map((name, index) => ({ name, count: counter[index] }))
                 .filter(item => item.name.toLowerCase().includes(query));
+            toggleSort(); // Maintain sort order when searching
             currentPage = 1; // Reset to first page
             displayTable(currentPage, searchResults);
         }
 
         // Initial Display
+        searchResults.sort((a, b) => b.count - a.count); // Default sort order
         displayTable(currentPage, searchResults);
     </script>
 </body>
 </html>
-
