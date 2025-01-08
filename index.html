@@ -140,11 +140,12 @@
             counter[distinct.indexOf(name)]++;
         }
 
-        const rowsPerPage = 32; // Rows to display per page
+        const rowsPerPage = 10; // Rows to display per page
         let currentPage = 1; // Current page
         let searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Full list
-        let sortDescending = true; // Sort order flag
+        let sortBySacrificed = false; // Flag to toggle between recent name order and most sacrificed order
 
+        // Display table based on the current page
         function displayTable(page, data) {
             const table = document.getElementById("table");
             table.innerHTML = `
@@ -153,7 +154,7 @@
                     <td>
                         <div class="sortable" onclick="toggleSort()">
                             Times Sacrificed
-                            <span>${sortDescending ? "▲▼" : "▼▲"}</span>
+                            <span>${sortBySacrificed ? "▲▼" : "▼▲"}</span>
                         </div>
                     </td>
                 </tr>
@@ -169,6 +170,7 @@
             updatePagination(page, data.length);
         }
 
+        // Update the pagination buttons
         function updatePagination(page, totalRows) {
             const pagination = document.getElementById("pagination");
             const totalPages = Math.ceil(totalRows / rowsPerPage);
@@ -210,18 +212,25 @@
             pagination.appendChild(next10Button);
         }
 
+        // Change page based on button click (1 or 10 pages)
         function changePage(step) {
             const totalPages = Math.ceil(searchResults.length / rowsPerPage);
             currentPage = Math.max(1, Math.min(currentPage + step, totalPages));
             displayTable(currentPage, searchResults);
         }
 
+        // Toggle between sorting by "Most Sacrificed" and "Most Recent"
         function toggleSort() {
-            sortDescending = !sortDescending;
-            searchResults.sort((a, b) => sortDescending ? b.count - a.count : a.count - b.count);
+            sortBySacrificed = !sortBySacrificed;
+            if (sortBySacrificed) {
+                searchResults.sort((a, b) => b.count - a.count); // Sort by most sacrificed (descending)
+            } else {
+                searchResults = distinct.map((name, index) => ({ name, count: counter[index] })); // Revert to original order
+            }
             displayTable(currentPage, searchResults);
         }
 
+        // Filter search results based on input
         function search() {
             const query = document.getElementById("searchbar").value.toLowerCase();
             searchResults = distinct
@@ -232,9 +241,9 @@
             displayTable(currentPage, searchResults);
         }
 
-        // Initial Display
-        searchResults.sort((a, b) => b.count - a.count); // Default sort order
+        // Initial Display: Default to most recent order (no sorting)
         displayTable(currentPage, searchResults);
     </script>
 </body>
 </html>
+
