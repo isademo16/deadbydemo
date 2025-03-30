@@ -131,7 +131,14 @@
         }
 
         .page-number.active {
-            background-color: #5f2f5f;
+            background-color: #5f2f5f; /* Dark gray box around the active page number */
+            border-radius: 5px;
+        }
+
+        .page-number span {
+            padding: 2px 5px;
+            background-color: #333;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -233,6 +240,12 @@
             pageNumber.classList.add("active"); // Add active class to highlight the current page
             pageNumber.onclick = () => showPageInput(page);
             pagination.appendChild(pageNumber);
+
+            // Total Pages Info
+            const totalPagesInfo = document.createElement("span");
+            totalPagesInfo.textContent = `of ${totalPages} pages`;
+            totalPagesInfo.style.color = "white";
+            pagination.appendChild(totalPagesInfo);
 
             // Page input field (hidden by default)
             const pageInput = document.createElement("input");
