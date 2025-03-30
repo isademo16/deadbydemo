@@ -235,9 +235,11 @@
 
             // Page Number (clickable)
             const pageNumber = document.createElement("span");
-            pageNumber.textContent = `Page ${page}`;
+            pageNumber.textContent = `${page}`;
             pageNumber.classList.add("page-number");
-            pageNumber.classList.add("active"); // Add active class to highlight the current page
+            if (currentPage === page) {
+                pageNumber.classList.add("active"); // Add active class to highlight the current page
+            }
             pageNumber.onclick = () => showPageInput(page);
             pagination.appendChild(pageNumber);
 
