@@ -85,6 +85,7 @@
             justify-content: center;
             gap: 5px;
             margin-top: 20px;
+            align-items: center;
         }
         .pagination button {
             padding: 5px 10px;
@@ -113,6 +114,24 @@
             border: #9c459c solid 2px;
             width: 50px;
             text-align: center;
+        }
+
+        /* Style for the clickable page number */
+        .page-number {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #2e2e2e;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .page-number:hover {
+            background-color: #9c459c;
+        }
+
+        .page-number.active {
+            background-color: #5f2f5f;
         }
     </style>
 </head>
@@ -210,8 +229,8 @@
             // Page Number (clickable)
             const pageNumber = document.createElement("span");
             pageNumber.textContent = `Page ${page}`;
-            pageNumber.style.color = "white";
-            pageNumber.style.cursor = "pointer";
+            pageNumber.classList.add("page-number");
+            pageNumber.classList.add("active"); // Add active class to highlight the current page
             pageNumber.onclick = () => showPageInput(page);
             pagination.appendChild(pageNumber);
 
@@ -248,7 +267,7 @@
         // Show page input when page number is clicked
         function showPageInput(page) {
             const pagination = document.getElementById("pagination");
-            const pageNumber = pagination.querySelector("span");
+            const pageNumber = pagination.querySelector(".page-number");
             const pageInput = pagination.querySelector("input");
             pageNumber.style.display = "none";
             pageInput.style.display = "inline-block";
@@ -258,7 +277,7 @@
         // Hide the page input field when clicking outside
         function hidePageInput() {
             const pagination = document.getElementById("pagination");
-            const pageNumber = pagination.querySelector("span");
+            const pageNumber = pagination.querySelector(".page-number");
             const pageInput = pagination.querySelector("input");
             pageNumber.style.display = "inline-block";
             pageInput.style.display = "none";
