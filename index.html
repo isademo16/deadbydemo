@@ -107,6 +107,13 @@
             font-size: 12px;
             color: #7092be;
         }
+        .page-input {
+            background-color: #171717;
+            color: white;
+            border: #9c459c solid 2px;
+            width: 50px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -200,12 +207,28 @@
             prevButton.onclick = () => changePage(-1);
             pagination.appendChild(prevButton);
 
-            // Page Info (Current Page / Total Pages)
-            const pageInfo = document.createElement("span");
-            pageInfo.textContent = `Page ${page} of ${totalPages}`;
-            pageInfo.style.color = "white";
-            pageInfo.style.margin = "0 10px";
-            pagination.appendChild(pageInfo);
+            // Page Number (clickable)
+            const pageNumber = document.createElement("span");
+            pageNumber.textContent = `Page ${page}`;
+            pageNumber.style.color = "white";
+            pageNumber.style.cursor = "pointer";
+            pageNumber.onclick = () => showPageInput(page);
+            pagination.appendChild(pageNumber);
+
+            // Page input field (hidden by default)
+            const pageInput = document.createElement("input");
+            pageInput.type = "number";
+            pageInput.value = page;
+            pageInput.classList.add("page-input");
+            pageInput.style.display = "none";
+            pageInput.onblur = () => hidePageInput();
+            pageInput.onkeydown = (e) => {
+                if (e.key === "Enter") {
+                    changePageTo(parseInt(pageInput.value));
+                    hidePageInput();
+                }
+            };
+            pagination.appendChild(pageInput);
 
             // Next Button
             const nextButton = document.createElement("button");
@@ -220,6 +243,32 @@
             next10Button.disabled = page + 10 > totalPages;
             next10Button.onclick = () => changePage(10);
             pagination.appendChild(next10Button);
+        }
+
+        // Show page input when page number is clicked
+        function showPageInput(page) {
+            const pagination = document.getElementById("pagination");
+            const pageNumber = pagination.querySelector("span");
+            const pageInput = pagination.querySelector("input");
+            pageNumber.style.display = "none";
+            pageInput.style.display = "inline-block";
+            pageInput.focus();
+        }
+
+        // Hide the page input field when clicking outside
+        function hidePageInput() {
+            const pagination = document.getElementById("pagination");
+            const pageNumber = pagination.querySelector("span");
+            const pageInput = pagination.querySelector("input");
+            pageNumber.style.display = "inline-block";
+            pageInput.style.display = "none";
+        }
+
+        // Change page to the specified number
+        function changePageTo(page) {
+            const totalPages = Math.ceil(filteredResults.length / rowsPerPage);
+            currentPage = Math.max(1, Math.min(page, totalPages));
+            displayTable(currentPage, filteredResults);
         }
 
         // Change page based on button click (1 or 10 pages)
