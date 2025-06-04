@@ -2,7 +2,7 @@
 let players = [];
 let filteredPlayers = [];
 let currentPage = 1;
-let sortBySacrificed = false;
+let sortBySacrificed = false; // Default to most recent (false)
 const rowsPerPage = 20;
 
 // DOM elements
@@ -75,7 +75,7 @@ async function loadNamesFromFile() {
 function updateStats() {
     const totalKills = players.reduce((sum, player) => sum + player.count, 0);
     const uniqueSurvivors = players.length;
-    const topPlayer = players.sort((a, b) => b.count - a.count)[0];
+    const topPlayer = players.length > 0 ? [...players].sort((a, b) => b.count - a.count)[0] : null;
     
     totalKillsEl.textContent = totalKills;
     uniqueSurvivorsEl.textContent = uniqueSurvivors;
@@ -91,9 +91,12 @@ function filterAndRender() {
         player.name.toLowerCase().includes(searchQuery)
     );
 
-    // Sort players
+    // Sort players - default to most recent (original order), or by most sacrificed
     if (sortBySacrificed) {
         filteredPlayers.sort((a, b) => b.count - a.count);
+    } else {
+        // Keep original order for "most recent"
+        filteredPlayers = filteredPlayers.slice();
     }
 
     // Reset to first page when filtering
@@ -264,10 +267,10 @@ function toggleSort() {
     
     if (sortBySacrificed) {
         sortText.textContent = 'Most Sacrificed';
-        sortIcon.innerHTML = '<polyline points="18,15 12,9 6,15"></polyline>';
+        sortIcon.innerHTML = '<polyline points="6,9 12,15 18,9"></polyline>';
     } else {
         sortText.textContent = 'Most Recent';
-        sortIcon.innerHTML = '<polyline points="6,9 12,15 18,9"></polyline>';
+        sortIcon.innerHTML = '<polyline points="18,15 12,9 6,15"></polyline>';
     }
     
     filterAndRender();
