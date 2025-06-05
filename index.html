@@ -128,7 +128,29 @@
                         <!-- Stats Cards -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                             <div class="bg-red-950/30 border border-red-800/50 rounded-lg p-6 text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy h-8 w-8 text-red-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:112:20" data-lov-name="Trophy" data-component-path="src/pages/Index.tsx" data-component-line="112" data-component-file="Index.tsx" data-component-name="Trophy" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-red-400%20mx-auto%20mb-2%22%7D">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skull h-8 w-8 text-yellow-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:128:20" data-lov-name="Skull" data-component-path="src/pages/Index.tsx" data-component-line="128" data-component-file="Index.tsx" data-component-name="Skull" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-yellow-400%20mx-auto%20mb-2%22%7D">
+                                        <path d="m12.5 17-.5-1-.5 1h1z"></path>
+                                        <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"></path>
+                                        <circle cx="15" cy="12" r="1"></circle>
+                                        <circle cx="9" cy="12" r="1"></circle>
+                                    </svg>
+                                <div class="text-2xl font-bold text-red-300" id="total-kills">0</div>
+                                <div class="text-red-500 text-sm">Total Sacrifices</div>
+                            </div>
+                            
+                            <div class="bg-purple-950/30 border border-purple-800/50 rounded-lg p-6 text-center">
+                   #             <svg class="skull-icon h-8 w-8 text-purple-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M17 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M9 21v-2a4 4 0 0 1 3-3.87"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <circle cx="15" cy="7" r="4"/>
+                    #            </svg>
+                                <div class="text-2xl font-bold text-purple-300" id="unique-survivors">0</div>
+                                <div class="text-purple-500 text-sm">Unique Survivors</div>
+                            </div>
+                            
+                            <div class="bg-yellow-950/30 border border-yellow-800/50 rounded-lg p-6 text-center">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy h-8 w-8 text-red-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:112:20" data-lov-name="Trophy" data-component-path="src/pages/Index.tsx" data-component-line="112" data-component-file="Index.tsx" data-component-name="Trophy" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-red-400%20mx-auto%20mb-2%22%7D">
                                         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
                                         <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
                                         <path d="M4 22h16"></path>
@@ -136,29 +158,6 @@
                                         <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
                                         <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
                                     </svg>
-                                <div class="text-2xl font-bold text-red-300" id="total-kills">0</div>
-                                <div class="text-red-500 text-sm">Total Sacrifices</div>
-                            </div>
-                            
-                            <div class="bg-purple-950/30 border border-purple-800/50 rounded-lg p-6 text-center">
-                                <svg class="skull-icon h-8 w-8 text-purple-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path d="M17 21v-2a4 4 0 0 0-3-3.87"/>
-                                    <path d="M9 21v-2a4 4 0 0 1 3-3.87"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <circle cx="15" cy="7" r="4"/>
-                                </svg>
-                                <div class="text-2xl font-bold text-purple-300" id="unique-survivors">0</div>
-                                <div class="text-purple-500 text-sm">Unique Survivors</div>
-                            </div>
-                            
-                            <div class="bg-yellow-950/30 border border-yellow-800/50 rounded-lg p-6 text-center">
-                                <svg class="skull-icon h-8 w-8 text-yellow-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <circle cx="9" cy="12" r="1"/>
-                                    <circle cx="15" cy="12" r="1"/>
-                                    <path d="M8 21v-2a4 4 0 0 1 4-4 4 4 0 0 1 4 4v2"/>
-                                    <path d="M15 5v2a3 3 0 0 1-3 3 3 3 0 0 1-3-3V5a3 3 0 0 1 3-3 3 3 0 0 1 3 3Z"/>
-                                    <path d="M2.5 17a11.5 11.5 0 0 1 2-2M21.5 17a11.5 11.5 0 0 0-2-2M6 15l1.5-1.5M18 15l-1.5-1.5"/>
-                                </svg>
                                 <div class="text-2xl font-bold text-yellow-300" id="most-sacrificed">0</div>
                                 <div class="text-yellow-500 text-sm">Most Sacrificed</div>
                             </div>
