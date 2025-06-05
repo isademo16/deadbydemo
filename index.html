@@ -96,13 +96,17 @@
 </head>
 <body class="dark bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white min-h-screen">
     <!-- Loading Screen -->
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black flex items-center justify-center">
-      <div className="text-center space-y-4">
-        <Skull className="h-16 w-16 text-purple-400 animate-pulse mx-auto" />
-        <p className="text-purple-300 text-xl font-bold">Loading the Entity's records...</p>
-      </div>
+    <div id="loading-screen" class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black flex items-center justify-center">
+        <div class="text-center space-y-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skull h-8 w-8 text-purple-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:128:20" data-lov-name="Skull" data-component-path="src/pages/Index.tsx" data-component-line="128" data-component-file="Index.tsx" data-component-name="Skull" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-purple-400%20mx-auto%20mb-2%22%7D">
+                <path d="m12.5 17-.5-1-.5 1h1z"></path>
+                <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"></path>
+                <circle cx="15" cy="12" r="1"></circle>
+                <circle cx="9" cy="12" r="1"></circle>
+            </svg>
+            <p class="text-purple-300 text-xl font-bold">Loading the Entity's records...</p>
+        </div>
     </div>
-
 
     <!-- Main App -->
     <div id="main-app" class="hidden">
