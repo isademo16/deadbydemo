@@ -139,6 +139,7 @@ function createPlayerCard(player, number) {
             <div class="flex-1 min-w-0">
                 <h3 class="font-semibold text-white truncate">${escapeHtml(player.name)}</h3>
                 <p class="text-sm text-gray-400">Survivor #${number}</p>
+                <p class="text-xs text-gray-500 mt-1">Last sacrifice: ${currentDate}</p>
             </div>
             <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${badgeColor}">
                 ${player.count}x
