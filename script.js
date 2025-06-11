@@ -143,29 +143,6 @@ function createPlayerCard(player, number) {
         badgeColor = 'bg-gray-700/50 text-gray-300 border-gray-600/50';
     }
 
-    // Get current date for "date of last sacrifice"
-    const currentDate = new Date().toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-    });
-
-    card.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-white truncate">${escapeHtml(player.name)}</h3>
-                <p class="text-sm text-gray-400">Survivor #${number}</p>
-                <p class="text-xs text-gray-500 mt-1">Last sacrifice: ${currentDate}</p>
-            </div>
-            <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${badgeColor}">
-                ${player.count}x
-            </span>
-        </div>
-    `;
-
-    return card;
-}
-
 // Render pagination
 function renderPagination() {
     const totalPages = Math.ceil(filteredPlayers.length / rowsPerPage);
