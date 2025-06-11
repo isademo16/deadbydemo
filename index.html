@@ -1,143 +1,261 @@
-// Configuration
-const pageSize = 20;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dead by Demo - Kill Tracker</title>
+    <meta name="description" content="Dead by Daylight Kill Tracker - The Entity's ledger of sacrificed survivors">
+    <meta name="author" content="DemoGorgon">
 
-let allNames = [];
-let filteredNames = [];
-let currentPage = 1;
-let sortDescending = true;
+    <meta property="og:title" content="Dead by Demo - Kill Tracker">
+    <meta property="og:description" content="Dead by Daylight Kill Tracker - The Entity's ledger of sacrificed survivors">
+    <meta property="og:type" content="website">
 
-// Elements
-const resultsGrid = document.getElementById("results-grid");
-const pagination = document.getElementById("pagination");
-const searchInput = document.getElementById("search-input");
-const sortButton = document.getElementById("sort-button");
-const sortText = document.getElementById("sort-text");
-const sortIcon = document.getElementById("sort-icon");
-const searchTerm = document.getElementById("search-term");
-const noResults = document.getElementById("no-results");
-const loadingScreen = document.getElementById("loading-screen");
-const mainApp = document.getElementById("main-app");
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: 'hsl(217.2 32.6% 17.5%)',
+                        input: 'hsl(217.2 32.6% 17.5%)',
+                        ring: 'hsl(212.7 26.8% 83.9%)',
+                        background: 'hsl(222.2 84% 4.9%)',
+                        foreground: 'hsl(210 40% 98%)',
+                        primary: {
+                            DEFAULT: 'hsl(210 40% 98%)',
+                            foreground: 'hsl(222.2 47.4% 11.2%)'
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217.2 32.6% 17.5%)',
+                            foreground: 'hsl(210 40% 98%)'
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0 62.8% 30.6%)',
+                            foreground: 'hsl(210 40% 98%)'
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(217.2 32.6% 17.5%)',
+                            foreground: 'hsl(215 20.2% 65.1%)'
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(217.2 32.6% 17.5%)',
+                            foreground: 'hsl(210 40% 98%)'
+                        },
+                        popover: {
+                            DEFAULT: 'hsl(222.2 84% 4.9%)',
+                            foreground: 'hsl(210 40% 98%)'
+                        },
+                        card: {
+                            DEFAULT: 'hsl(222.2 84% 4.9%)',
+                            foreground: 'hsl(210 40% 98%)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .loading-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
 
-// Load names.txt
-async function loadNames() {
-    try {
-        const response = await fetch("names.txt");
-        const text = await response.text();
-        allNames = text.split('\n').map(name => name.trim()).filter(Boolean);
-        filteredNames = [...allNames];
+        .page-input {
+            background: rgba(55, 65, 81, 0.5);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            width: 60px;
+            text-align: center;
+        }
 
-        render();
-        loadingScreen.classList.add("hidden");
-        mainApp.classList.remove("hidden");
-    } catch (err) {
-        console.error("Error loading names.txt:", err);
-    }
-}
+        .page-input:focus {
+            outline: none;
+            border-color: rgba(147, 51, 234, 1);
+        }
 
-// Render names
-function render() {
-    // Sort
-    filteredNames.sort((a, b) => sortDescending ? b.localeCompare(a) : a.localeCompare(b));
+        .skull-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body class="dark bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white min-h-screen">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black flex items-center justify-center">
+        <div class="text-center space-y-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16 text-purple-400 animate-pulse mx-auto">
+                <path d="m12.5 17-.5-1-.5 1h1z"></path>
+                <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"></path>
+                <circle cx="15" cy="12" r="1"></circle>
+                <circle cx="9" cy="12" r="1"></circle>
+            </svg>
+            <p class="text-purple-300 text-xl font-bold">Loading the Entity's records...</p>
+        </div>
+    </div>
 
-    // Pagination
-    const start = (currentPage - 1) * pageSize;
-    const paginated = filteredNames.slice(start, start + pageSize);
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.03\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'2\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+        
+        <div class="relative z-10">
+            <!-- Header -->
+            <header class="border-b border-purple-800/30 bg-black/20 backdrop-blur-sm">
+                <div class="max-w-7xl mx-auto px-4 py-8">
+                    <div class="text-center space-y-6">
+                        <div class="flex items-center justify-center gap-4">
+                            <h1 class="text-6xl font-black bg-gradient-to-r from-red-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
+                                DEAD BY DEMO
+                            </h1>
+                        </div>
+                        
+                        <p class="text-purple-300 text-lg max-w-2xl mx-auto">
+                            The Demogorgon's list of survivors who couldn't escape the trial
+                        </p>
 
-    // Clear
-    resultsGrid.innerHTML = "";
+                        <!-- Stats Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                            <div class="bg-red-950/30 border border-red-800/50 rounded-lg p-6 text-center">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skull h-8 w-8 text-red-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:128:20" data-lov-name="Skull" data-component-path="src/pages/Index.tsx" data-component-line="128" data-component-file="Index.tsx" data-component-name="Skull" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-red-400%20mx-auto%20mb-2%22%7D">
+                                        <path d="m12.5 17-.5-1-.5 1h1z"></path>
+                                        <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"></path>
+                                        <circle cx="15" cy="12" r="1"></circle>
+                                        <circle cx="9" cy="12" r="1"></circle>
+                                    </svg>
+                                <div class="text-2xl font-bold text-red-300" id="total-kills">0</div>
+                                <div class="text-red-500 text-sm">Total Sacrifices</div>
+                            </div>
+                            
+                            <div class="bg-purple-950/30 border border-purple-800/50 rounded-lg p-6 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users h-8 w-8 text-purple-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:120:20" data-lov-name="Users" data-component-path="src/pages/Index.tsx" data-component-line="120" data-component-file="Index.tsx" data-component-name="Users" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-purple-400%20mx-auto%20mb-2%22%7D">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                <div class="text-2xl font-bold text-purple-300" id="unique-survivors">0</div>
+                                <div class="text-purple-500 text-sm">Unique Survivors</div>
+                            </div>
+                            
+                            <div class="bg-yellow-950/30 border border-yellow-800/50 rounded-lg p-6 text-center">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy h-8 w-8 text-yellow-400 mx-auto mb-2" data-lov-id="src/pages/Index.tsx:112:20" data-lov-name="Trophy" data-component-path="src/pages/Index.tsx" data-component-line="112" data-component-file="Index.tsx" data-component-name="Trophy" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-yellow-400%20mx-auto%20mb-2%22%7D">
+                                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                        <path d="M4 22h16"></path>
+                                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                                    </svg>
+                                <div class="text-2xl font-bold text-yellow-300" id="most-sacrificed">0</div>
+                                <div class="text-yellow-500 text-sm">Most Sacrificed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-    // Show/hide no results
-    if (filteredNames.length === 0) {
-        noResults.classList.remove("hidden");
-        searchTerm.textContent = searchInput.value;
-        pagination.classList.add("hidden");
-    } else {
-        noResults.classList.add("hidden");
-        pagination.classList.remove("hidden");
+            <!-- Main Content -->
+            <main class="max-w-7xl mx-auto px-4 py-8">
+                <!-- Controls -->
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    <div class="relative flex-1">
+                        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input
+                            type="text"
+                            placeholder="Search for a survivor..."
+                            id="search-input"
+                            class="pl-10 bg-gray-800/50 border border-purple-600/30 text-white placeholder-purple-400 focus:border-purple-500 w-full px-3 py-2 rounded-md focus:outline-none"
+                        />
+                    </div>
+                    
+                    <button
+                        id="sort-button"
+                        class="bg-purple-900/30 border border-purple-600/50 text-purple-300 hover:bg-purple-800/40 px-4 py-2 rounded-md flex items-center gap-2 transition-colors"
+                    >
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                        </svg>
+                        <span id="sort-text">Most Recent</span>
+                        <svg id="sort-icon" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="6,9 12,15 18,9"></polyline>
+                        </svg>
+                    </button>
+                </div>
 
-        // Render cards
-        paginated.forEach(name => {
-            const div = document.createElement("div");
-            div.className = "bg-gray-900/50 border border-purple-800/40 p-4 rounded-lg";
-            div.innerHTML = `<div class="font-semibold text-purple-300 truncate">${name}</div>`;
-            resultsGrid.appendChild(div);
-        });
-    }
+                <!-- Results Grid -->
+                <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                    <!-- Players will be inserted here -->
+                </div>
 
-    updatePagination();
-    updateStats();
-}
+                <!-- Pagination -->
+                <div id="pagination" class="flex items-center justify-center gap-2 hidden">
+                    <!-- Pagination will be inserted here -->
+                </div>
 
-// Update pagination controls
-function updatePagination() {
-    pagination.innerHTML = "";
-    const totalPages = Math.ceil(filteredNames.length / pageSize);
+                <!-- No Results -->
+                <div id="no-results" class="text-center py-12 hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16 text-gray-600 mx-auto mb-4">
+                        <path d="m12.5 17-.5-1-.5 1h1z"></path>
+                        <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"></path>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <circle cx="9" cy="12" r="1"></circle>
+                    </svg>
+                    <p class="text-gray-400 text-lg">No survivors found matching "<span id="search-term"></span>"</p>
+                    <p class="text-gray-500 text-sm">They must have escaped the trial...</p>
+                </div>
+            </main>
 
-    if (totalPages <= 1) {
-        pagination.classList.add("hidden");
-        return;
-    }
+            <!-- Footer -->
+            <footer class="border-t border-purple-800/30 bg-black/20 backdrop-blur-sm mt-16">
+                <div class="max-w-7xl mx-auto px-4 py-6 text-center space-y-2">
+                    <p class="text-purple-400 text-sm">
+                        May the Entity be ever in your favor • Dead by Daylight Kill Tracker
+                    </p>
+                    <div class="space-y-1">
+                        <div>
+                            <a 
+                                href="https://steamcommunity.com/id/demogorgon_official/" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                class="text-blue-400 hover:text-blue-300 text-sm underline"
+                            >
+                                https://steamcommunity.com/id/demogorgon_official/
+                            </a>
+                        </div>
+                        <div>
+                            <a 
+                                href="https://isademo16.github.io/deadbydemoLegacy/" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                class="text-blue-400 hover:text-blue-300 text-sm underline"
+                            >
+                                Legacy List
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
 
-    pagination.classList.remove("hidden");
-
-    const createBtn = (text, page, disabled = false) => {
-        const btn = document.createElement("button");
-        btn.textContent = text;
-        btn.className = `px-3 py-1 rounded-md border border-purple-600/30 text-purple-300 bg-gray-800/40 hover:bg-purple-800/30 transition ${
-            disabled ? "opacity-50 cursor-not-allowed" : ""
-        }`;
-        if (!disabled) btn.onclick = () => {
-            currentPage = page;
-            render();
-        };
-        pagination.appendChild(btn);
-    };
-
-    createBtn("← Prev", currentPage - 1, currentPage === 1);
-
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.textContent = i;
-        btn.className = `px-3 py-1 rounded-md border ${
-            i === currentPage
-                ? "bg-purple-700 text-white border-purple-600"
-                : "border-purple-600/30 text-purple-300 hover:bg-purple-800/30"
-        }`;
-        btn.onclick = () => {
-            currentPage = i;
-            render();
-        };
-        pagination.appendChild(btn);
-    }
-
-    createBtn("Next →", currentPage + 1, currentPage === totalPages);
-}
-
-// Update stats
-function updateStats() {
-    document.getElementById("total-kills").textContent = allNames.length;
-    document.getElementById("unique-survivors").textContent = new Set(allNames).size;
-
-    const freq = {};
-    allNames.forEach(name => freq[name] = (freq[name] || 0) + 1);
-    const max = Math.max(...Object.values(freq));
-    document.getElementById("most-sacrificed").textContent = max;
-}
-
-// Search
-searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase().trim();
-    filteredNames = allNames.filter(name => name.toLowerCase().includes(query));
-    currentPage = 1;
-    render();
-});
-
-// Sort toggle
-sortButton.addEventListener("click", () => {
-    sortDescending = !sortDescending;
-    sortText.textContent = sortDescending ? "Most Recent" : "Alphabetical";
-    render();
-});
-
-// Start
-loadNames();
+    <script src="script.js"></script>
+</body>
+</html>
