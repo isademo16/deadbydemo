@@ -2,7 +2,7 @@
 let players = [];
 let filteredPlayers = [];
 let currentPage = 1;
-let sortMode = 0; // 0 = most recent, 1 = most sacrificed, 2 = alphabetical
+let sortBySacrificed = false;
 const rowsPerPage = 20;
 
 // DOM elements
@@ -75,7 +75,7 @@ async function loadNamesFromFile() {
 function updateStats() {
     const totalKills = players.reduce((sum, player) => sum + player.count, 0);
     const uniqueSurvivors = players.length;
-    const topPlayer = players.length > 0 ? [...players].sort((a, b) => b.count - a.count)[0] : null;
+    const topPlayer = players.sort((a, b) => b.count - a.count)[0];
     
     totalKillsEl.textContent = totalKills;
     uniqueSurvivorsEl.textContent = uniqueSurvivors;
@@ -91,16 +91,9 @@ function filterAndRender() {
         player.name.toLowerCase().includes(searchQuery)
     );
 
-    // Sort players based on current mode
-    if (sortMode === 0) {
-        // Most recent - keep original order
-        filteredPlayers = filteredPlayers.slice();
-    } else if (sortMode === 1) {
-        // Most sacrificed - sort by count descending
+    // Sort players
+    if (sortBySacrificed) {
         filteredPlayers.sort((a, b) => b.count - a.count);
-    } else if (sortMode === 2) {
-        // Alphabetical - sort by name ascending
-        filteredPlayers.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     // Reset to first page when filtering
@@ -122,9 +115,7 @@ function renderPlayers() {
     resultsGrid.innerHTML = '';
 
     paginatedPlayers.forEach((player, index) => {
-        // Calculate reverse numbering: total count - current position + 1
-        const reverseNumber = filteredPlayers.length - (start + index);
-        const playerCard = createPlayerCard(player, reverseNumber);
+        const playerCard = createPlayerCard(player, start + index + 1);
         resultsGrid.appendChild(playerCard);
     });
 }
@@ -142,6 +133,21 @@ function createPlayerCard(player, number) {
     } else {
         badgeColor = 'bg-gray-700/50 text-gray-300 border-gray-600/50';
     }
+
+    card.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-white truncate">${escapeHtml(player.name)}</h3>
+                <p class="text-sm text-gray-400">Survivor #${number}</p>
+            </div>
+            <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${badgeColor}">
+                ${player.count}x
+            </span>
+        </div>
+    `;
+
+    return card;
+}
 
 // Render pagination
 function renderPagination() {
@@ -254,18 +260,14 @@ function updateNoResults(searchQuery) {
 
 // Toggle sort
 function toggleSort() {
-    // Cycle through the three sort modes
-    sortMode = (sortMode + 1) % 3;
+    sortBySacrificed = !sortBySacrificed;
     
-    if (sortMode === 0) {
-        sortText.textContent = 'Most Recent';
-        sortIcon.innerHTML = '<polyline points="18,15 12,9 6,15"></polyline>';
-    } else if (sortMode === 1) {
+    if (sortBySacrificed) {
         sortText.textContent = 'Most Sacrificed';
+        sortIcon.innerHTML = '<polyline points="18,15 12,9 6,15"></polyline>';
+    } else {
+        sortText.textContent = 'Most Recent';
         sortIcon.innerHTML = '<polyline points="6,9 12,15 18,9"></polyline>';
-    } else if (sortMode === 2) {
-        sortText.textContent = 'Alphabetical';
-        sortIcon.innerHTML = '<polyline points="3,8 6,5 9,8"></polyline><polyline points="3,16 6,19 9,16"></polyline>';
     }
     
     filterAndRender();
