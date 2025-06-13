@@ -62,7 +62,7 @@ async function loadNamesFromFile() {
         players = Object.entries(nameCount).map(([name, count]) => ({
             name,
             count
-        }));
+        })).reverse(); // Reverse order for "most recent" last
 
         console.log('Loaded players:', players);
     } catch (error) {
