@@ -140,6 +140,7 @@ function createPlayerCard(player) {
         <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
                 <h3 class="font-semibold text-white truncate">${escapeHtml(player.name)}</h3>
+                <div class="h-4"></div> <!-- empty line for spacing -->
             </div>
             <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${badgeColor}">
                 ${player.count}x
