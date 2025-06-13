@@ -117,15 +117,13 @@ function renderPlayers() {
     resultsGrid.innerHTML = '';
 
     paginatedPlayers.forEach((player) => {
-        const overallIndex = players.findIndex(p => p.name === player.name);
-        const survivorNumber = overallIndex + 1;
-        const playerCard = createPlayerCard(player, survivorNumber);
+        const playerCard = createPlayerCard(player);
         resultsGrid.appendChild(playerCard);
     });
 }
 
 // Create player card
-function createPlayerCard(player, number) {
+function createPlayerCard(player) {
     const card = document.createElement('div');
     card.className = 'bg-gray-800/30 border border-gray-700/50 hover:border-purple-600/50 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 rounded-lg p-4';
     
@@ -142,7 +140,6 @@ function createPlayerCard(player, number) {
         <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
                 <h3 class="font-semibold text-white truncate">${escapeHtml(player.name)}</h3>
-                <p class="text-sm text-gray-400">Survivor #${number}</p>
             </div>
             <span class="ml-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${badgeColor}">
                 ${player.count}x
