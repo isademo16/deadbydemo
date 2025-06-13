@@ -62,7 +62,7 @@ async function loadNamesFromFile() {
         players = Object.entries(nameCount).map(([name, count]) => ({
             name,
             count
-        })).reverse(); // Reverse order for "most recent" last
+        }));
 
         console.log('Loaded players:', players);
     } catch (error) {
@@ -95,8 +95,7 @@ function filterAndRender() {
     if (sortBySacrificed) {
         filteredPlayers.sort((a, b) => b.count - a.count);
     } else {
-        // Keep original order for "most recent"
-        filteredPlayers = filteredPlayers.slice();
+        filteredPlayers = filteredPlayers.slice(); // preserve original order
     }
 
     // Reset to first page when filtering
@@ -117,8 +116,10 @@ function renderPlayers() {
 
     resultsGrid.innerHTML = '';
 
-    paginatedPlayers.forEach((player, index) => {
-        const playerCard = createPlayerCard(player, start + index + 1);
+    paginatedPlayers.forEach((player) => {
+        const overallIndex = players.findIndex(p => p.name === player.name);
+        const survivorNumber = overallIndex + 1;
+        const playerCard = createPlayerCard(player, survivorNumber);
         resultsGrid.appendChild(playerCard);
     });
 }
