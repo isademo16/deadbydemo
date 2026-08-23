@@ -128,10 +128,12 @@ function createPlayerCard(player) {
     card.className = 'bg-gray-800/30 border border-gray-700/50 hover:border-purple-600/50 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 rounded-lg p-4';
     
     let badgeColor;
-    if (player.count >= 8) {
+    if (player.count >= 4) {
         badgeColor = 'bg-red-950/50 text-red-300 border-red-800/50';
-    } else if (player.count >= 4) {
-        badgeColor = 'bg-orange-950/50 text-orange-300 border-orange-800/50';
+    } else if (player.count >= 3) {
+        badgeColor = 'bg-orange-950/50 text-orange-300 border-orange-800/5';
+    } else if (player.count >= 2) {
+        badgeColor = 'bg-yellow-950/50 text-yellow-300 border-yellow-800/50';
     } else {
         badgeColor = 'bg-gray-700/50 text-gray-300 border-gray-600/50';
     }
